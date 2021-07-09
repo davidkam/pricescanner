@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 
 
 class BaseController:
+    def __init__(self):
+        self.DEBUG = False
 
     def process(self):
         self.process_items("RTX+3090", 1000)
@@ -18,16 +20,19 @@ class BaseController:
             self.process_item(item, min_price)
 
     def process_item(self, item, min_price):
+        name = self.get_name(item)
         status = self.get_status(item)
+        if self.DEBUG:
+            print(f"{name.ljust(120)}{status}")
         if status.upper() not in self.IN_STOCK:
             return
 
         price = self.get_price(item)
+
         if price < min_price:
             return
 
         sku = self.get_sku(item)
-        name = self.get_name(item)
         link = self.get_link(item)
 
         url = link if link.startswith("http") else "%s%s"%(self.SITE_URL, link)

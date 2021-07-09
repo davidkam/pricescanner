@@ -77,7 +77,10 @@ class BHPhoto(BaseController):
     def get_items(self, dom):
         try:
             script = dom.find("div", {"id": "bh-portal"}).next_element
-            listing = json.loads(script.text.split("__PRELOADED_DATA = ")[1].split(";window.__SERVER_RENDER_TIME")[0])
+            if script.name == "script":
+                listing = json.loads(script.text.split("__PRELOADED_DATA = ")[1].split(";window.__SERVER_RENDER_TIME")[0])
+            if script.name == "div":
+                listing = json.loads(script["data-data"])
             items = listing["ListingStore"]["response"]["data"]["items"]
         except Exception as e:
             raise Exception("Unable to get items")
